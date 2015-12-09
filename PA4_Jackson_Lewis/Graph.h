@@ -35,7 +35,7 @@ public:
 	void set_vertices(unordered_map<int, vertex> new_vertices);
 
 	// Methods
-	stack<vertex> computeShortestPath(vertex start, int starting_vertex, int ending_vertex);
+	unordered_map<vertex, path> computeShortestPath(vertex start, int starting_vertex, int ending_vertex);
 	
 private:
 };
@@ -43,9 +43,9 @@ private:
 class PathWeightComparer
 {
 public:
-	bool operator()(const vertex lhs, const vertex rhs)
+	bool operator()(const path lhs, const path rhs)
 	{
-		return (lhs.getPathWeight() > rhs.getPathWeight());
+		return (lhs.get_vertices().top().getPathWeight() > lhs.get_vertices().top().getPathWeight());
 	}
 };
 

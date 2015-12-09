@@ -73,6 +73,7 @@ void network::driver(string filename)
 	vertex temp_vertex;
 	stack<vertex> temp_stack;
 	stack<vertex> reversed_temp_stack;
+	unordered_map<vertex, path> temp_paths;
 
 	// Run file processor
 	file_processor(filename);
@@ -156,14 +157,9 @@ void network::driver(string filename)
 				temp_packet.set_current_wait(temp_packet.get_next_hop()->getPathWeight() * temp_packet.get_next_hop()->get_load_factor()); // New set wait...
 								
 				// Compute the shortest route
-				temp_stack = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
+				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
 				
-				// Reverse stack
-				while (!temp_stack.empty())
-				{
-					reversed_temp_stack.push(temp_stack.top());
-					temp_stack.pop();
-				}
+			
 
 				// Print all of stack...
 //				for (int i = 0; i < reversed_temp_stack.size(); i++)
@@ -172,7 +168,7 @@ void network::driver(string filename)
 //					reversed_temp_stack.pop();
 //				}
 
-				temp_packet.get_packets_path().set_vertices(reversed_temp_stack);
+				//temp_packet.get_packets_path().set_vertices(reversed_temp_stac);
 				
 				// Grab the shortest path out of distances (ie. the next_hop)
 				/*		
@@ -208,12 +204,6 @@ void network::driver(string filename)
 						cout << endl << endl << "*****END DISTS*****" << endl;								
 				*/
 
-				temp_vertex = reversed_temp_stack.top();
-				temp_packet.get_packets_path().set_vertices(reversed_temp_stack);
-				while (!reversed_temp_stack.empty())
-				{
-					reversed_temp_stack.pop();
-				}
 				
 				// Determine next intermediary node
 				  // Check path?
@@ -289,7 +279,7 @@ void network::driver(string filename)
 					{
 						// Schedule another transmission
 						// Compute the shortest route
-						temp_stack = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
+						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
 
 						// Reverse stack
 						while (!temp_stack.empty())
