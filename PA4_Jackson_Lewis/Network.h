@@ -12,6 +12,7 @@
 #include "Includes.h"
 #include "Graph.h"
 #include "Message.h"
+#include "Path.h"
 
 // Class definition
 class network
@@ -23,7 +24,7 @@ public:
 	message _message;
 	vector<packet> in_the_network;
 	vector<packet> completed_packets;
-	path path;
+	path _path;
 
 	// Constructors
 	network();
