@@ -153,7 +153,5 @@ stack<vertex> graph::computeShortestPath(vertex start , int starting_vertex, int
 	}
 	cout << endl << endl << "*****END DISTS*****" << endl;*/
 
-
-
 	return temp_stack;
 }
