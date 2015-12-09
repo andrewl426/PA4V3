@@ -1,0 +1,70 @@
+12/2/15
+
+6:38pm
+Justin - Stubbed out classes (unfinished)
+			Only stubbed the headers, and only the vars and default constructors...
+
+7:13pm
+Justin - Stubbed out classes (unfinished)
+			Stubbed out more constructors, and all getters (NOTE: The getters are not set to return the correct information! They are only stubs...)
+			Setters still nees to be stubbed in!!
+
+7:51pm
+Justin - Stubbed out classes (unfinished)
+			Stubbed out the setters, as with the getters they do NOT function yet, they just exist.
+			I also stubbed out the functions that were recommended in the supplied uml diagram --- but they do not function.
+
+8:40pm
+Justin - Tried to make a mainline...
+			Tried to make a mainline that would loop through all cmdline args or allow user input if no args were present... It was a no go.
+			Ziping and emailing this file to you.
+
+10:16pm
+Andrew - Made a mainline
+			Mainline works. Currently just opens the file in argv or prompts for a new file.
+		- Set up github
+			I'll give you a quick tutorial over ts.
+
+12/3/15
+
+1:29pm
+		Justin - With Andrews help, the Git Repo is set up and we can both push and pull --- No code changes.
+
+Unknown
+		Andrew - Updated the includes file to use the namespace std
+
+12/4/15
+
+6:35pm
+		Justin - Introduction of the cfout function
+
+9:04pm
+		Andrew - Implemented Adams graph code. Currently having compiler issues. I believe its related to the operator overloading. Will revisit soon with fresh eyes
+
+9:43pm
+		Justin - Git Conflicts... Troubleshooting.
+
+10:17pm
+		Justin - Andrew got us down to 1/4th the errors... progress!
+
+12/5/15
+
+3:20pm
+		Justin - Andrew submitted our code to Adam, Adam removed our bug! Overloaders were at the wrong place. Progress can now resume.
+
+3:41pm
+		Justin - All setters and getters function.
+9:28pm
+		Andrew - File processing now works! Also Djikstras is implemented. Graph is created. Justin pseudocoded out the algorithm from Adam. Justin created a print of our graph.
+
+12/6/15
+
+6:10am
+		Justin - Couldn't sleep, worked for several hours... Comiting all... Stuck in an infi-loop. The for loop starting at NETWORK.CPP line 131 is not displaying values, 'i' apears to point at nothing... I dont understand..
+12:11pm
+		Andrew - Found bug when a space is entered. Program crashes.
+
+12/8/19
+
+3:09am
+		Justin - Havent been updating the changelog... no progress to note.. Bugs and logic flaws everywhere. Hopefully we can get things functional tomorrow.
