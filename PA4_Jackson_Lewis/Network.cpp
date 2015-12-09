@@ -73,7 +73,7 @@ void network::driver(string filename)
 	vertex temp_vertex;
 	stack<vertex> temp_stack;
 	stack<vertex> reversed_temp_stack;
-	unordered_map<vertex, path> temp_paths;
+	unordered_map<vertex*, path> temp_paths;
 
 	// Run file processor
 	file_processor(filename);
@@ -118,7 +118,7 @@ void network::driver(string filename)
 			temp_packet.set_previous_location(_graph.get_vertices().at(starting_vertex));
 			// Init next location to source... (makes sure its initialized...)
 			temp_packet.set_next_hop(_graph.get_vertices().at(starting_vertex));
-			temp_packet.set_current_wait(_graph.get_vertices().at(starting_vertex).getPathWeight());
+			temp_packet.set_current_wait(_graph.get_vertices().at(starting_vertex)->getPathWeight());
 			// Init dest to ending vertex...
 			temp_packet.set_destination(_graph.get_vertices().at(ending_vertex));
 			temp_packet.get_destination()->set_id(ending_vertex);				
@@ -144,7 +144,7 @@ void network::driver(string filename)
 		// Set all loadfactors to 1 BASE STATE
 		for (auto i : _graph.get_vertices())
 		{
-			i.second.set_load_factor(1);
+			i.second->set_load_factor(1);
 		}
 
 		// While not done...
@@ -153,64 +153,48 @@ void network::driver(string filename)
 			// If msg has more packets to send, queue the next packet for transmission at the starting location
 			if (!message_item.get_packets().empty())
 			{
+				temp_packet = message_item.pop_packet();
+
 				//temp_packet.set_current_wait(temp_packet.get_current_wait()	* temp_packet.get_next_hop()->getPathWeight()); //trying to update current wait
 				temp_packet.set_current_wait(temp_packet.get_next_hop()->getPathWeight() * temp_packet.get_next_hop()->get_load_factor()); // New set wait...
 								
 				// Compute the shortest route
-				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
-				
-			
+				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
 
-				// Print all of stack...
-//				for (int i = 0; i < reversed_temp_stack.size(); i++)
-//				{
-//					cout << endl << "TS: " << reversed_temp_stack.top().get_id();
-//					reversed_temp_stack.pop();
-//				}
-
-				//temp_packet.get_packets_path().set_vertices(reversed_temp_stac);
-				
-				// Grab the shortest path out of distances (ie. the next_hop)
-				/*		
-				int k = 0;
-				for (auto i : distances)
+				for (auto i : temp_paths)
 				{
-					if (k == 0)
+					for (int j = 0; j < i.second.get_vertices().size(); j++)
 					{
-						temp_vertex = i.first;
+						cout << "->" << i.second.pop_vertex()->get_id();
 					}
-					temp_packet.get_packets_path().push_vertex(i.first);
-					k++;
 				}
-				
-				// Compute the shortest route
-				//distances = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex));
-				
-				// PRINT DIJKSTRA RESULTS
-						cout << "*****DISTANCES*****" << endl << endl;
-						cout << "Path";
-						for (auto i : distances)
-						{
-							cout << " -> V" << i.first.get_id() << ", W" << i.second;
-						}
-						cout << endl << endl << "Distance to dest: ";
-						for (auto i : distances)
-						{
-							if (i.first.get_id() == ending_vertex)
-							{
-								cout << " -> V" << i.first.get_id() << ", W" << i.second;
-							}
-						}
-						cout << endl << endl << "*****END DISTS*****" << endl;								
-				*/
+
+				//// PRINT DIJKSTRA RESULTS
+				//		cout << "*****PATHS*****" << endl << endl;
+				//		cout << "Path";
+				//		for (auto i : temp_paths)
+				//		{
+				//			cout << " -> V" << i.first.get_id() << ", W" << i.second.;
+				//		}
+				//		cout << endl << endl << "Distance to dest: ";
+				//		for (auto i : distances)
+				//		{
+				//			if (i.first.get_id() == ending_vertex)
+				//			{
+				//				cout << " -> V" << i.first.get_id() << ", W" << i.second;
+				//			}
+				//		}
+				//		cout << endl << endl << "*****END DISTS*****" << endl;								
+				//*/
 
 				
 				// Determine next intermediary node
 				  // Check path?
-				temp_packet = message_item.pop_packet();
 
-				temp_packet.set_previous_location(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()));//initializiing temp packet
-				temp_packet.set_next_hop(_graph.get_vertices().at(temp_vertex.get_id()));
+				temp_packet.set_previous_location(temp_packet.get_next_hop());//initializiing temp packet
+				//temp_packet.set_next_hop(_graph.get_vertices().at(temp_vertex.get_id()));
+
+				temp_packet.set_next_hop(temp_paths.at(temp_packet.get_packets_path().pop_vertex()).get_vertices().top());
 				//temp_packet.get_previous_location()->set_edges();
 
 				// Queue the packets arrival at the proper time
@@ -279,7 +263,7 @@ void network::driver(string filename)
 					{
 						// Schedule another transmission
 						// Compute the shortest route
-						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex).get_id(), temp_packet.get_destination()->get_id());
+						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
 
 						// Reverse stack
 						while (!temp_stack.empty())
@@ -295,7 +279,7 @@ void network::driver(string filename)
 //							reversed_temp_stack.pop();
 //						}
 
-						in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
+					//	in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
 
 						// Grab the shortest path out of distances (ie. the next_hop)
 						/*
@@ -335,7 +319,7 @@ void network::driver(string filename)
 						reversed_temp_stack.pop();
 						temp_vertex = reversed_temp_stack.top();
 						
-						in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
+					//	in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
 						//while (!reversed_temp_stack.empty())
 						//{
 						//	reversed_temp_stack.pop();
@@ -434,13 +418,13 @@ void network::file_processor(string filename)
 
 		if (parsed.size() == 1) //This should be a new node then. 
 		{			
-			_graph._vertices[stoi(parsed[0])].set_id(stoi(parsed[0]));
+			_graph._vertices[stoi(parsed[0])]->set_id(stoi(parsed[0]));
 		}
 		else // this is a path
 		{
-			temp_paths[&_graph._vertices[stoi(parsed[1])]] = stoi(parsed[2]);
-			_graph._vertices[stoi(parsed[0])].set_edges(temp_paths);
-			_graph._vertices[stoi(parsed[0])].set_path_weight(stoi(parsed[2]));
+			temp_paths[_graph._vertices[stoi(parsed[1])]] = stoi(parsed[2]);
+			_graph._vertices[stoi(parsed[0])]->set_edges(temp_paths);
+			_graph._vertices[stoi(parsed[0])]->set_path_weight(stoi(parsed[2]));
 		}
 	}
 
@@ -450,7 +434,7 @@ void network::file_processor(string filename)
 	{
 		// Vertex (Header)
 		cout << endl << "Vertex: " << i.first << endl << "Paths:" << endl;
-		for (auto j : i.second.get_edges())
+		for (auto j : i.second->get_edges())
 		{
 			// Source
 			cout << "   Src: " << i.first << " ";
