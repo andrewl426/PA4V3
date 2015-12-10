@@ -391,19 +391,18 @@ void network::driver(string filename)
 
 				}
 			}
+			int done_count = 0;
 			for (auto i : in_the_network)
 			{
-				if (i.get_arrival() == false)
+				if (i.get_arrival() != false)
 				{
-					done = false;
-					break;
-				}
-				else
-				{
-					done = true;
+					done_count++;
 				}
 			}
-			
+			if (done_count == in_the_network.size())
+			{
+				done = true;
+			}
 			ticker++;
 		}
 	}
