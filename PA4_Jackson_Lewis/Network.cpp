@@ -162,12 +162,10 @@ void network::driver(string filename)
 			{
 				temp_packet = message_item.pop_packet();
 
-				//temp_packet.set_current_wait(temp_packet.get_current_wait()	* temp_packet.get_next_hop()->getPathWeight()); //trying to update current wait
 				temp_packet.set_current_wait(temp_packet.get_next_hop()->getPathWeight() * temp_packet.get_next_hop()->get_load_factor()); // New set wait...
 								
 				// Compute the shortest route
 				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-				//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_previous_location()->get_id()), _graph.get_vertices().at(temp_packet.get_previous_location()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 
 				int is_valid_vertex_path = 0;
 
@@ -186,7 +184,6 @@ void network::driver(string filename)
 						{
 							reversed_temp_stack.push(temp_stack.top());
 														
-							//cout << " -> " << temp_stack.top()->get_id();
 							if (temp_stack.size() > 0)
 							{
 								temp_stack.pop();
@@ -223,13 +220,7 @@ void network::driver(string filename)
 						reversed_temp_stack.pop();
 					}
 				}
-
-				// Queue the packets arrival at the proper time
-				  // push onto queue?
 				
-
-//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
-
 				temp_packet.set_current_wait(temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) * temp_packet.get_next_hop()->get_load_factor());
 
 				// Increase the load factor of each node that communicated this tick
@@ -257,14 +248,11 @@ void network::driver(string filename)
 					if (in_the_network[i].get_next_hop()->get_id() == ending_vertex)
 					{
 						in_the_network[i].set_arrival(true);
-						cout << "ARRIVAL   " << in_the_network[i].get_value() << endl;
 						// push this packet to completed packets
 						completed_packets.push_back(in_the_network[i]);
 						completed_packets.back().set_arrival_time(ticker);
 						//need to set route here as well once its know
 
-						//in_the_network.erase(in_the_network.begin() + i);
-						//in_the_network.shrink_to_fit();
 					}
 					else
 					{
@@ -280,31 +268,22 @@ void network::driver(string filename)
 							if (in_the_network[i].get_previous_location()->get_load_factor() > 1)
 							{
 								in_the_network.at(i).get_previous_location()->set_load_factor(in_the_network.at(i).get_previous_location()->get_load_factor() - 1);
-								//in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() - 1);
 							}
 
 							// Decrement load factor dest
 							// if the loadfactor is > 1
 							if (in_the_network[i].get_next_hop()->get_load_factor() > 1)
 							{
-								//in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() - 1);
 								in_the_network.at(i).get_next_hop()->set_load_factor(in_the_network.at(i).get_next_hop()->get_load_factor() - 1);
 							}
 
 							// If packet has not reached final dest, schedule another transmission using the first loop (Alter nodes transmitting packet)
 							if (in_the_network[i].get_previous_location()->get_id() != ending_vertex)
 							{
-								// Determine next intermediary node
-								// Check path?
-								if (!message_item.get_packets().empty())
-								{
-									in_the_network[i] = message_item.pop_packet();
-								}
+								
 
 								// Schedule another transmission
 								// Compute the shortest route
-								//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-								//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 								temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(in_the_network[i].get_next_hop()->get_id()), _graph.get_vertices().at(in_the_network[i].get_next_hop()->get_id())->get_id(), in_the_network[i].get_destination()->get_id());
 
 								// Search temp_paths for destination node
@@ -318,8 +297,6 @@ void network::driver(string filename)
 										for (int j = 0; j < i.second.get_vertices().size(); j++)
 										{
 											reversed_temp_stack.push(temp_stack.top());
-
-											//cout << " -> " << temp_stack.top()->get_id();
 
 											if (temp_stack.size() > 0)
 											{
@@ -368,8 +345,6 @@ void network::driver(string filename)
 									// Queue the packets arrival at the proper time
 									// push onto queue?
 
-
-									//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
 
 									in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
 
@@ -466,8 +441,6 @@ void network::file_processor(string filename)
 
 		if (parsed.size() == 1) //This should be a new node then. 
 		{			
-			//_graph._vertices[stoi(parsed[0])]->set_id(stoi(parsed[0]));
-			//_graph.get_vertices()[stoi(parsed[0])];
 			_graph._vertices[stoi(parsed[0])] = new vertex{  };
 			_graph._vertices[stoi(parsed[0])]->set_id(stoi(parsed[0]));
 		}
