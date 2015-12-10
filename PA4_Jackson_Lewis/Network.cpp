@@ -238,6 +238,7 @@ void network::driver(string filename)
 					if (in_the_network[i].get_next_hop()->get_id() == ending_vertex)
 					{
 						in_the_network[i].set_arrival(true);
+						cout << "ARRIVAL   " << in_the_network[i].get_value() << endl;
 						// push this packet to completed packets
 						completed_packets.push_back(in_the_network[i]);
 						completed_packets.back().set_arrival_time(ticker);
