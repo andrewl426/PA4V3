@@ -27,6 +27,7 @@ public:
 	vertex* _previous_location;
 	vertex* _next_hop;
 	path _packets_path;
+	vector<int> history;
 
 	// Constructors
 	packet();
@@ -47,6 +48,7 @@ public:
 	vertex* get_previous_location();
 	vertex* get_next_hop(); 
 	path packet::get_packets_path();
+	vector<int> get_history();
 
 	// Setters
 	void set_value(int new_value);
@@ -58,6 +60,7 @@ public:
 	void set_previous_location(vertex* new_previous_location);
 	void set_next_hop(vertex* new_next_hop);
 	void set_packets_path(path new_packets_path);
+	void add_to_history(int _new_vertex);
 
 	// Methods
 

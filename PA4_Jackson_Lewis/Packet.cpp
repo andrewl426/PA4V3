@@ -79,6 +79,12 @@ path packet::get_packets_path()
 	return _packets_path;
 }
 
+vector<int> packet::get_history()
+{
+
+	return history;
+}
+
 // Setters
 void packet::set_value(int new_value)
 {
@@ -115,6 +121,11 @@ void packet::set_next_hop(vertex* new_next_hop)
 void packet::set_packets_path(path new_packets_path)
 {
 	_packets_path = new_packets_path;
+}
+
+void packet::add_to_history(int _new_vertex)
+{
+	history.push_back(_new_vertex);
 }
 
 // Methods
