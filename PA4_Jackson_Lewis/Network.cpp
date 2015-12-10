@@ -182,6 +182,13 @@ void network::driver(string filename)
 							}
 						}
 					}
+////// EXIT IF INVALID PATH
+					else
+					{
+						cout << endl << endl << "There is no path between these vertices. Exiting..." << endl;
+						system("pause");
+						exit(-1);
+					}
 				}
 				
 				// Determine next intermediary node
