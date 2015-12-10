@@ -170,25 +170,6 @@ void network::driver(string filename)
 					}
 					cout << endl;
 				}
-
-				//// PRINT DIJKSTRA RESULTS
-				//		cout << "*****PATHS*****" << endl << endl;
-				//		cout << "Path";
-				//		for (auto i : temp_paths)
-				//		{
-				//			cout << " -> V" << i.first.get_id() << ", W" << i.second.;
-				//		}
-				//		cout << endl << endl << "Distance to dest: ";
-				//		for (auto i : distances)
-				//		{
-				//			if (i.first.get_id() == ending_vertex)
-				//			{
-				//				cout << " -> V" << i.first.get_id() << ", W" << i.second;
-				//			}
-				//		}
-				//		cout << endl << endl << "*****END DISTS*****" << endl;								
-				//*/
-
 				
 				// Determine next intermediary node
 				  // Check path?
@@ -209,14 +190,6 @@ void network::driver(string filename)
 				// Update dest load factor
 				temp_packet.get_next_hop()->set_load_factor(temp_packet.get_next_hop()->get_load_factor()+1);
 
-				// Load factor out
-				// Print load factor info... 
-				/*
-				cout << endl << "Load Factor: First Loop" << endl;
-				cout << "PreLF: " << temp_packet.get_previous_location()->get_load_factor() << endl;
-				cout << "NexLF: " << temp_packet.get_next_hop()->get_load_factor() << endl;
-				*/
-		
 				// Push temp_packet into the network vector
 				in_the_network.push_back(temp_packet);
 
@@ -224,7 +197,6 @@ void network::driver(string filename)
 				cout << "Sending packet " << temp_packet.get_value() << " to vertex " << temp_packet._next_hop->get_id()
 					<< " with a wait of " << temp_packet.get_current_wait() << " at time " << ticker << endl;
 			}
-
 
 			// For each packet in the network...			
 			for (int i = 0; i < in_the_network.size(); i++)
@@ -253,13 +225,6 @@ void network::driver(string filename)
 						in_the_network.at(i).get_next_hop()->set_load_factor(in_the_network.at(i).get_next_hop()->get_load_factor() - 1);
 					}
 
-					// Print load factor info...
-					/*
-					cout << endl << "Load Factor: Decrement" << endl;
-					cout << "PreLF: " << in_the_network[i].get_previous_location()->get_load_factor() << endl;
-					cout << "NexLF: " << in_the_network[i].get_next_hop()->get_load_factor() << endl;
-					*/
-					
 					// If packet has not reached final dest, schedule another transmission using the first loop (Alter nodes transmitting packet)
 					if (in_the_network[i].get_previous_location()->get_id() != ending_vertex)
 					{
@@ -274,58 +239,8 @@ void network::driver(string filename)
 							temp_stack.pop();
 						}
 
-						// Print all of stack...
-//						for (int i = 0; i < reversed_temp_stack.size(); i++)
-//						{
-//							cout << endl << "TS: " << reversed_temp_stack.top().get_id();
-//							reversed_temp_stack.pop();
-//						}
-
-					//	in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
-
-						// Grab the shortest path out of distances (ie. the next_hop)
-						/*
-						int k = 0;
-						for (auto i : distances)
-						{
-						if (k == 0)
-						{
-						temp_vertex = i.first;
-						}
-						temp_packet.get_packets_path().push_vertex(i.first);
-						k++;
-						}
-
-						// Compute the shortest route
-						//distances = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex));
-
-						// PRINT DIJKSTRA RESULTS
-						cout << "*****DISTANCES*****" << endl << endl;
-						cout << "Path";
-						for (auto i : distances)
-						{
-						cout << " -> V" << i.first.get_id() << ", W" << i.second;
-						}
-						cout << endl << endl << "Distance to dest: ";
-						for (auto i : distances)
-						{
-						if (i.first.get_id() == ending_vertex)
-						{
-						cout << " -> V" << i.first.get_id() << ", W" << i.second;
-						}
-						}
-						cout << endl << endl << "*****END DISTS*****" << endl;
-						*/
-
-						
 						reversed_temp_stack.pop();
 						temp_vertex = reversed_temp_stack.top();
-						
-					//	in_the_network[i].get_packets_path().set_vertices(reversed_temp_stack);
-						//while (!reversed_temp_stack.empty())
-						//{
-						//	reversed_temp_stack.pop();
-						//}
 
 						// Determine next intermediary node
 						// Check path?
@@ -348,20 +263,11 @@ void network::driver(string filename)
 						// Update dest load factor
 						in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() + 1);
 
-						// Print load factor info...
-						/*
-						cout << endl << "Load Factor: Second Loop" << endl;
-						cout << "PreLF: " << in_the_network[i].get_previous_location()->get_load_factor() << endl;
-						cout << "NexLF: " << in_the_network[i].get_next_hop()->get_load_factor() << endl;
-						*/
-
 						// prints adams style info
 						cout << "Sending packet " << in_the_network[i].get_value() << " to vertex " << in_the_network[i]._next_hop->get_id()
 							<< " with a wait of " << in_the_network[i].get_current_wait() << " at time " << ticker << endl;
 					}
 
-					//cout << in_the_network[i].get_destination()->get_id() << " " << ending_vertex << endl;
-					//system("PAUSE");
 					// If packet has reached destination, add to list of completed packets
 					if (in_the_network[i].get_destination()->get_id() == ending_vertex)
 					{
