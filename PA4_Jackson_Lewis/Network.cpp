@@ -71,8 +71,8 @@ void network::driver(string filename)
 	int ticker = 0;
 	unordered_map<vertex, int> distances;
 	vertex temp_vertex;
-	stack<vertex> temp_stack;
-	stack<vertex> reversed_temp_stack;
+	stack<vertex*> temp_stack;
+	stack<vertex*> reversed_temp_stack;
 	unordered_map<vertex*, path> temp_paths;
 
 	// Run file processor
@@ -161,24 +161,31 @@ void network::driver(string filename)
 				// Compute the shortest route
 				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
 
-				for (int i = 1; i < _graph.get_vertices().size() + 1; i++)
+				// Search temp_paths for destination node
+				for (auto i : temp_paths)
 				{
-					for (j = 1; j < temp_paths[_graph.get_vertices()[i]].get_vertices().size(); j++)
+					if (i.first->get_id() == ending_vertex)
 					{
-						cout << temp_paths[_graph.get_vertices()[i]].get_vertices().top()->get_id() << "->";
-						temp_paths[_graph.get_vertices()[i]].get_vertices().pop();
+						cout << "This is our path (in reverse)";
+						temp_stack = i.second.get_vertices();
+
+						for (int j = 0; j < i.second.get_vertices().size(); j++)
+						{
+							reversed_temp_stack.push(temp_stack.top());
+														
+							cout << " -> " << temp_stack.top()->get_id();
+							temp_stack.pop();							
+						}
 					}
-					cout << endl;
 				}
 				
 				// Determine next intermediary node
 				  // Check path?
 
 				temp_packet.set_previous_location(temp_packet.get_next_hop());//initializiing temp packet
-				//temp_packet.set_next_hop(_graph.get_vertices().at(temp_vertex.get_id()));
 
-				temp_packet.set_next_hop(temp_paths.at(temp_packet.get_packets_path().pop_vertex()).get_vertices().top());
-				//temp_packet.get_previous_location()->set_edges();
+				temp_packet.set_next_hop(reversed_temp_stack.top());
+				reversed_temp_stack.pop();
 
 				// Queue the packets arrival at the proper time
 				  // push onto queue?
@@ -228,20 +235,6 @@ void network::driver(string filename)
 					// If packet has not reached final dest, schedule another transmission using the first loop (Alter nodes transmitting packet)
 					if (in_the_network[i].get_previous_location()->get_id() != ending_vertex)
 					{
-						// Schedule another transmission
-						// Compute the shortest route
-						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-
-						// Reverse stack
-						while (!temp_stack.empty())
-						{
-							reversed_temp_stack.push(temp_stack.top());
-							temp_stack.pop();
-						}
-
-						reversed_temp_stack.pop();
-						temp_vertex = reversed_temp_stack.top();
-
 						// Determine next intermediary node
 						// Check path?
 						if (!message_item.get_packets().empty())
@@ -249,9 +242,36 @@ void network::driver(string filename)
 							in_the_network[i] = message_item.pop_packet();
 						}
 
-						in_the_network[i].set_previous_location(_graph.get_vertices().at(in_the_network[i].get_next_hop()->get_id()));//initializiing temp packet
-						in_the_network[i].set_next_hop(_graph.get_vertices().at(temp_vertex.get_id()));
-						//temp_packet.get_previous_location()->set_edges();
+						// Schedule another transmission
+						// Compute the shortest route
+						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
+
+
+						// Search temp_paths for destination node
+						for (auto i : temp_paths)
+						{
+							if (i.first->get_id() == ending_vertex)
+							{
+								cout << "This is our path (in reverse)";
+								temp_stack = i.second.get_vertices();
+
+								for (int j = 0; j < i.second.get_vertices().size(); j++)
+								{
+									reversed_temp_stack.push(temp_stack.top());
+
+									cout << " -> " << temp_stack.top()->get_id();
+									temp_stack.pop();
+								}
+							}
+						}
+
+						// Determine next intermediary node
+						// Check path?
+
+						in_the_network[i].set_previous_location(in_the_network[i].get_next_hop());//initializiing temp packet
+
+						in_the_network[i].set_next_hop(reversed_temp_stack.top());
+						reversed_temp_stack.pop();
 
 						// Queue the packets arrival at the proper time
 						// push onto queue?
