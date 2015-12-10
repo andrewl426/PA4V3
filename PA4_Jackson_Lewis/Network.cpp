@@ -74,6 +74,7 @@ void network::driver(string filename)
 	stack<vertex*> temp_stack;
 	stack<vertex*> reversed_temp_stack;
 	unordered_map<vertex*, path> temp_paths;
+	bool done = false;
 
 	// Run file processor
 	file_processor(filename);
@@ -148,7 +149,7 @@ void network::driver(string filename)
 		}
 
 		// While not done...
-		while (!message_item.get_packets().empty() || !in_the_network.empty()) // While true that we are not finished (More packets to be sent, or more packets are in transmission...)
+		while (!message_item.get_packets().empty() || done == false) // While true that we are not finished (More packets to be sent, or more packets are in transmission...)
 		{
 			// If msg has more packets to send, queue the next packet for transmission at the starting location
 			if (!message_item.get_packets().empty())
@@ -227,130 +228,146 @@ void network::driver(string filename)
 			{
 				// Decrement expected arrival time
 				// Arrival --
-				in_the_network[i].set_current_wait((in_the_network[i].get_current_wait() - 1)); // Not sure if this works
+				if(in_the_network[i].get_arrival() == false)
+				{ 
+					in_the_network[i].set_current_wait((in_the_network[i].get_current_wait() - 1)); // Not sure if this works
 
-				// If time is <= 0, it arrived
-				if (in_the_network[i].get_current_wait() <= 0) // Not sure if this works
-				{
+					// If time is <= 0, it arrived
+					if (in_the_network[i].get_current_wait() <= 0) // Not sure if this works
+					{
 
-					// Decrement load factor source
-					// if the loadfactor is > 1
-					if (in_the_network[i].get_previous_location()->get_load_factor() > 1)
-					{
-						in_the_network.at(i).get_previous_location()->set_load_factor(in_the_network.at(i).get_previous_location()->get_load_factor() - 1);
-						//in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() - 1);
-					}
-					
-					// Decrement load factor dest
-					// if the loadfactor is > 1
-					if (in_the_network[i].get_next_hop()->get_load_factor() > 1)
-					{
-						//in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() - 1);
-						in_the_network.at(i).get_next_hop()->set_load_factor(in_the_network.at(i).get_next_hop()->get_load_factor() - 1);
-					}
-
-					// If packet has not reached final dest, schedule another transmission using the first loop (Alter nodes transmitting packet)
-					if (in_the_network[i].get_previous_location()->get_id() != ending_vertex)
-					{
-						// Determine next intermediary node
-						// Check path?
-						if (!message_item.get_packets().empty())
+						// Decrement load factor source
+						// if the loadfactor is > 1
+						if (in_the_network[i].get_previous_location()->get_load_factor() > 1)
 						{
-							in_the_network[i] = message_item.pop_packet();
+							in_the_network.at(i).get_previous_location()->set_load_factor(in_the_network.at(i).get_previous_location()->get_load_factor() - 1);
+							//in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() - 1);
 						}
 
-						// Schedule another transmission
-						// Compute the shortest route
-						//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
-
-						// Search temp_paths for destination node
-						for (auto i : temp_paths)
+						// Decrement load factor dest
+						// if the loadfactor is > 1
+						if (in_the_network[i].get_next_hop()->get_load_factor() > 1)
 						{
-							if (i.first->get_id() == ending_vertex)
+							//in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() - 1);
+							in_the_network.at(i).get_next_hop()->set_load_factor(in_the_network.at(i).get_next_hop()->get_load_factor() - 1);
+						}
+
+						// If packet has not reached final dest, schedule another transmission using the first loop (Alter nodes transmitting packet)
+						if (in_the_network[i].get_previous_location()->get_id() != ending_vertex)
+						{
+							// Determine next intermediary node
+							// Check path?
+							if (!message_item.get_packets().empty())
 							{
-								//cout << "This is our path (in reverse)";
-								temp_stack = i.second.get_vertices();
+								in_the_network[i] = message_item.pop_packet();
+							}
 
-								for (int j = 0; j < i.second.get_vertices().size(); j++)
+							// Schedule another transmission
+							// Compute the shortest route
+							//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
+							temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
+
+							// Search temp_paths for destination node
+							for (auto i : temp_paths)
+							{
+								if (i.first->get_id() == ending_vertex)
 								{
-									reversed_temp_stack.push(temp_stack.top());
+									//cout << "This is our path (in reverse)";
+									temp_stack = i.second.get_vertices();
 
-									//cout << " -> " << temp_stack.top()->get_id();
-									
-									if (temp_stack.size() > 0)
+									for (int j = 0; j < i.second.get_vertices().size(); j++)
 									{
-										temp_stack.pop();
+										reversed_temp_stack.push(temp_stack.top());
+
+										//cout << " -> " << temp_stack.top()->get_id();
+
+										if (temp_stack.size() > 0)
+										{
+											temp_stack.pop();
+										}
 									}
 								}
 							}
-						}
 
-						// Determine next intermediary node
-						// Check path?
+							// Determine next intermediary node
+							// Check path?
 
-						in_the_network[i].set_previous_location(in_the_network[i].get_next_hop());//initializiing temp packet
-						
-						while (reversed_temp_stack.top()->get_id() != in_the_network[i].get_previous_location()->get_id())
-						{
+							in_the_network[i].set_previous_location(in_the_network[i].get_next_hop());//initializiing temp packet
+
+							while (reversed_temp_stack.top()->get_id() != in_the_network[i].get_previous_location()->get_id())
+							{
+								if (reversed_temp_stack.size() > 0)
+								{
+									reversed_temp_stack.pop();
+								}
+							}
 							if (reversed_temp_stack.size() > 0)
 							{
 								reversed_temp_stack.pop();
 							}
-						}
-						if (reversed_temp_stack.size() > 0)
-						{
-							reversed_temp_stack.pop();
-						}
-						if (reversed_temp_stack.size() > 0)
-						{
-							in_the_network[i].set_next_hop(reversed_temp_stack.top());
-						}
-						while (!reversed_temp_stack.empty())
-						{
 							if (reversed_temp_stack.size() > 0)
 							{
-								reversed_temp_stack.pop();
+								in_the_network[i].set_next_hop(reversed_temp_stack.top());
 							}
+							while (!reversed_temp_stack.empty())
+							{
+								if (reversed_temp_stack.size() > 0)
+								{
+									reversed_temp_stack.pop();
+								}
+							}
+
+
+							if (in_the_network[i].get_next_hop() != nullptr)
+							{
+								// Queue the packets arrival at the proper time
+								// push onto queue?
+
+
+								//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
+
+								in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
+
+								// Increase the load factor of each node that communicated this tick
+								// Update source load factor
+								in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() + 1);
+								// Update dest load factor
+								in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() + 1);
+							}
+
+							// prints adams style info
+							cout << "Sending packet " << in_the_network[i].get_value() << " to vertex " << in_the_network[i]._next_hop->get_id()
+								<< " with a wait of " << in_the_network[i].get_current_wait() << " at time " << ticker << endl;
 						}
 
-
-						if (in_the_network[i].get_next_hop() != nullptr)
+						// If packet has reached destination, add to list of completed packets
+						if (in_the_network[i].get_previous_location()->get_id() == ending_vertex)
 						{
-							// Queue the packets arrival at the proper time
-							// push onto queue?
+							in_the_network[i].set_arrival(true);
+							// push this packet to completed packets
+							completed_packets.push_back(in_the_network[i]);
+							completed_packets.back().set_arrival_time(ticker);
+							//need to set route here as well once its know
 
-
-							//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
-
-							in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
-
-							// Increase the load factor of each node that communicated this tick
-							// Update source load factor
-							in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() + 1);
-							// Update dest load factor
-							in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() + 1);
+							//in_the_network.erase(in_the_network.begin() + i);
+							//in_the_network.shrink_to_fit();
 						}
-
-						// prints adams style info
-						cout << "Sending packet " << in_the_network[i].get_value() << " to vertex " << in_the_network[i]._next_hop->get_id()
-							<< " with a wait of " << in_the_network[i].get_current_wait() << " at time " << ticker << endl;
 					}
 
-					// If packet has reached destination, add to list of completed packets
-					if (in_the_network[i].get_previous_location()->get_id() == ending_vertex)
-					{
-						// push this packet to completed packets
-						completed_packets.push_back(in_the_network[i]);
-						completed_packets.back().set_arrival_time(ticker);
-						//need to set route here as well once its know
-						
-						in_the_network.erase(in_the_network.begin()+i);
-						in_the_network.shrink_to_fit();
-					}
 				}
 			}
-
+			for (auto i : in_the_network)
+			{
+				if (i.get_arrival() == false)
+				{
+					done = false;
+					break;
+				}
+				else
+				{
+					done = true;
+				}
+			}
 			
 			ticker++;
 		}

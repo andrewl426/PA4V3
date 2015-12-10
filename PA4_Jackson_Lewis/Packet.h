@@ -22,6 +22,7 @@ public:
 	int _order = 0;
 	int _current_wait = 0;
 	int _arrival_time = 0;
+	bool _arrived = false;
 	vertex* _destination;
 	vertex* _previous_location;
 	vertex* _next_hop;
@@ -41,6 +42,7 @@ public:
 	const int get_arrival_time();
 	const int get_order();
 	const int get_current_wait();
+	const bool get_arrival();
 	vertex* get_destination();
 	vertex* get_previous_location();
 	vertex* get_next_hop(); 
@@ -50,6 +52,7 @@ public:
 	void set_value(int new_value);
 	void set_arrival_time(int new_time);
 	void set_order(int new_order);
+	void set_arrival(bool new_arrival);
 	void set_current_wait(int new_current_wait);
 	void set_destination(vertex* new_destination);
 	void set_previous_location(vertex* new_previous_location);

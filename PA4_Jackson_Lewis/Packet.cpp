@@ -58,6 +58,10 @@ const int packet::get_current_wait()
 {
 	return _current_wait;
 }
+const bool packet::get_arrival()
+{
+	return _arrived;
+}
 vertex* packet::get_destination()
 {
 	return _destination;
@@ -87,6 +91,10 @@ void packet::set_arrival_time(int new_time)
 void packet::set_order(int new_order)
 {
 	_order = new_order;
+}
+void packet::set_arrival(bool new_arrival)
+{
+	_arrived = new_arrival;
 }
 void packet::set_current_wait(int new_current_wait)
 {
