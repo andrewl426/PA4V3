@@ -193,6 +193,9 @@ void network::driver(string filename)
 					reversed_temp_stack.pop();
 				}
 				temp_packet.set_next_hop(reversed_temp_stack.top());
+				temp_packet.add_to_history(temp_packet.get_previous_location()->get_id());
+
+				temp_packet.add_to_history(temp_packet.get_next_hop()->get_id());
 				while (!reversed_temp_stack.empty())
 				{
 					if (reversed_temp_stack.size() > 0)
@@ -325,6 +328,8 @@ void network::driver(string filename)
 									if (in_the_network[i].get_next_hop()->get_id() != ending_vertex)
 									{
 										in_the_network[i].set_next_hop(reversed_temp_stack.top());
+										in_the_network[i].add_to_history(in_the_network[i].get_next_hop()->get_id());
+
 									}
 								}
 								while (!reversed_temp_stack.empty())
@@ -394,21 +399,6 @@ void network::driver(string filename)
 
 	print_arrivals(); //print what happened during the simulation
 
-	// Print re-ordered message
-	cout << endl << endl << "Decoded message: ";
-	
-	int print_int = 0;
-	while (print_int < completed_packets.size())
-	{
-		for (auto i : completed_packets)
-		{
-			if (i.get_order() == print_int)
-			{
-				cout << i.get_value();	
-			}
-		}
-		print_int++;
-	}
 }
 
 void network::print_arrivals()
@@ -416,11 +406,28 @@ void network::print_arrivals()
 	cout << endl << endl << "Packet     Arrival Time     Route" << endl;
 	for (auto i : completed_packets)
 	{
-		cout << i.get_value() << "          " << i.get_arrival_time() << "          Path coming soon" << endl;
-		/*for (auto j : i._packets_path._vertices) this will be route soon
+		cout << i.get_value() << "          " << i.get_arrival_time() << "          " ;
+		for (auto j : i.get_history())
 		{
+			cout << j << ", ";
+		}
+		cout << endl;
+	}
 
-		}*/
+	// Print re-ordered message
+	cout << endl << endl << "Decoded message: ";
+
+	int print_int = 0;
+	while (print_int < completed_packets.size())
+	{
+		for (auto i : completed_packets)
+		{
+			if (i.get_order() == print_int)
+			{
+				cout << i.get_value();
+			}
+		}
+		print_int++;
 	}
 }
 
