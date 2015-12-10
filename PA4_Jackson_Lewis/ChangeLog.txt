@@ -68,3 +68,8 @@ Unknown
 
 3:09am
 		Justin - Havent been updating the changelog... no progress to note.. Bugs and logic flaws everywhere. Hopefully we can get things functional tomorrow.
+
+12/10/15
+
+3:15am
+		We forgot about the changelog... But it all works now! 
