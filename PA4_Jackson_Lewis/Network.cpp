@@ -393,6 +393,22 @@ void network::driver(string filename)
 	}
 
 	print_arrivals(); //print what happened during the simulation
+
+	// Print re-ordered message
+	cout << endl << endl << "Decoded message: ";
+	
+	int print_int = 0;
+	while (print_int < completed_packets.size())
+	{
+		for (auto i : completed_packets)
+		{
+			if (i.get_order() == print_int)
+			{
+				cout << i.get_value();	
+			}
+		}
+		print_int++;
+	}
 }
 
 void network::print_arrivals()
