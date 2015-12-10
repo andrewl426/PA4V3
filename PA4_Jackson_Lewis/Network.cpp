@@ -363,18 +363,7 @@ void network::driver(string filename)
 									<< " with a wait of " << in_the_network[i].get_current_wait() << " at time " << ticker << endl;
 							}
 
-							// If packet has reached destination, add to list of completed packets
-							//if (in_the_network[i].get_previous_location()->get_id() == ending_vertex)
-							//{
-							//	in_the_network[i].set_arrival(true);
-							//	// push this packet to completed packets
-							//	completed_packets.push_back(in_the_network[i]);
-							//	completed_packets.back().set_arrival_time(ticker);
-							//	//need to set route here as well once its know
-
-							//	//in_the_network.erase(in_the_network.begin() + i);
-							//	//in_the_network.shrink_to_fit();
-							//}
+							
 						}
 					}
 

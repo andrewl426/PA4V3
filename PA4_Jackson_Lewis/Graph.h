@@ -45,11 +45,11 @@ class PathWeightComparer
 public:
 	bool operator()(const path &lhs, const path &rhs)
 	{
-		return (lhs.get_vertices().top()->getPathWeight() > lhs.get_vertices().top()->getPathWeight());
+		return (lhs.get_distance_traveled() > rhs.get_distance_traveled());
 	}
 	bool operator()(const vertex &lhs, const vertex &rhs)
 	{
-		return (lhs.getPathWeight() > lhs.getPathWeight());
+		return (lhs.getPathWeight() > rhs.getPathWeight());
 	}
 };
 
