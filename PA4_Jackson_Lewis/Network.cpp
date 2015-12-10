@@ -166,14 +166,14 @@ void network::driver(string filename)
 				{
 					if (i.first->get_id() == ending_vertex)
 					{
-						cout << "This is our path (in reverse)";
+						//cout << "This is our path (in reverse)";
 						temp_stack = i.second.get_vertices();
 
 						for (int j = 0; j < i.second.get_vertices().size(); j++)
 						{
 							reversed_temp_stack.push(temp_stack.top());
 														
-							cout << " -> " << temp_stack.top()->get_id();
+							//cout << " -> " << temp_stack.top()->get_id();
 							temp_stack.pop();							
 						}
 					}
@@ -184,12 +184,20 @@ void network::driver(string filename)
 
 				temp_packet.set_previous_location(temp_packet.get_next_hop());//initializiing temp packet
 
-				temp_packet.set_next_hop(reversed_temp_stack.top());
 				reversed_temp_stack.pop();
+				temp_packet.set_next_hop(reversed_temp_stack.top());
+				while (!reversed_temp_stack.empty())
+				{
+					reversed_temp_stack.pop();
+				}
 
 				// Queue the packets arrival at the proper time
 				  // push onto queue?
-				temp_packet.set_current_wait(temp_packet.get_next_hop()->getPathWeight() * temp_packet.get_next_hop()->get_load_factor());
+				
+
+//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
+
+				temp_packet.set_current_wait(temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) * temp_packet.get_next_hop()->get_load_factor());
 
 				// Increase the load factor of each node that communicated this tick
 				// Update source load factor
@@ -244,22 +252,22 @@ void network::driver(string filename)
 
 						// Schedule another transmission
 						// Compute the shortest route
-						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-
+						//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
+						temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 
 						// Search temp_paths for destination node
 						for (auto i : temp_paths)
 						{
 							if (i.first->get_id() == ending_vertex)
 							{
-								cout << "This is our path (in reverse)";
+								//cout << "This is our path (in reverse)";
 								temp_stack = i.second.get_vertices();
 
 								for (int j = 0; j < i.second.get_vertices().size(); j++)
 								{
 									reversed_temp_stack.push(temp_stack.top());
 
-									cout << " -> " << temp_stack.top()->get_id();
+									//cout << " -> " << temp_stack.top()->get_id();
 									temp_stack.pop();
 								}
 							}
@@ -269,13 +277,25 @@ void network::driver(string filename)
 						// Check path?
 
 						in_the_network[i].set_previous_location(in_the_network[i].get_next_hop());//initializiing temp packet
-
-						in_the_network[i].set_next_hop(reversed_temp_stack.top());
+						
+						while (reversed_temp_stack.top()->get_id() != in_the_network[i].get_previous_location()->get_id())
+						{
+							reversed_temp_stack.pop();
+						}
 						reversed_temp_stack.pop();
+						in_the_network[i].set_next_hop(reversed_temp_stack.top());
+						while (!reversed_temp_stack.empty())
+						{
+							reversed_temp_stack.pop();
+						}
 
 						// Queue the packets arrival at the proper time
 						// push onto queue?
-						in_the_network[i].set_current_wait(in_the_network[i].get_next_hop()->getPathWeight() * in_the_network[i].get_next_hop()->get_load_factor());
+
+
+						//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
+
+						in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
 
 						// Increase the load factor of each node that communicated this tick
 						// Update source load factor
@@ -289,7 +309,7 @@ void network::driver(string filename)
 					}
 
 					// If packet has reached destination, add to list of completed packets
-					if (in_the_network[i].get_destination()->get_id() == ending_vertex)
+					if (in_the_network[i].get_previous_location()->get_id() == ending_vertex)
 					{
 						// push this packet to completed packets
 						completed_packets.push_back(in_the_network[i]);
