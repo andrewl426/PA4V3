@@ -96,10 +96,10 @@ unordered_map<vertex*, path> graph::computeShortestPath(vertex* start , int star
 						path next_path = top;
 						//int current_path_weight = top.get_distance_traveled() * next->get_load_factor();
 						int current_path_weight = item.second * next->get_load_factor();
-						top.set_distance_traveled(top.get_distance_traveled() + current_path_weight);
+						next_path.set_distance_traveled(top.get_distance_traveled() + current_path_weight);
 
 						next_path.push_vertex(next);
-						next_path.set_distance_traveled(current_path_weight);
+						//next_path.set_distance_traveled(current_path_weight);
 						dijkstra_queue.push(next_path);
 					}
 				}
