@@ -161,6 +161,7 @@ void network::driver(string filename)
 								
 				// Compute the shortest route
 				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
+				//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_previous_location()->get_id()), _graph.get_vertices().at(temp_packet.get_previous_location()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 
 				// Search temp_paths for destination node
 				for (auto i : temp_paths)
@@ -283,7 +284,8 @@ void network::driver(string filename)
 								// Schedule another transmission
 								// Compute the shortest route
 								//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
-								temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
+								//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_next_hop()->get_id()), _graph.get_vertices().at(temp_packet.get_next_hop()->get_id())->get_id(), temp_packet.get_destination()->get_id());
+								temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_previous_location()->get_id()), _graph.get_vertices().at(temp_packet.get_previous_location()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 
 								// Search temp_paths for destination node
 								for (auto i : temp_paths)
