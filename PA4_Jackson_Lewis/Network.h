@@ -13,6 +13,7 @@
 #include "Graph.h"
 #include "Message.h"
 #include "Path.h"
+#include "Packet.h"
 
 // Class definition
 class network
