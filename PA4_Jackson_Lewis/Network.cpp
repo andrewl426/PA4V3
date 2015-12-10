@@ -103,6 +103,12 @@ void network::driver(string filename)
 		message_item.set_starting_vertex(_graph.get_vertices().at(starting_vertex));
 		message_item.set_ending_vertex(_graph.get_vertices().at(ending_vertex));
 	}
+	else
+	{
+		cout << endl << endl << "An invalid vertex was entered, or the file could not be opened. Exiting..." << endl;
+		system("pause");
+		exit(-1);
+	}
 
 	// Turn message into message item full of packets
 	cout << endl << "*****PACKET SUMMARY*****" << endl << endl;
@@ -163,6 +169,8 @@ void network::driver(string filename)
 				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
 				//temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(temp_packet.get_previous_location()->get_id()), _graph.get_vertices().at(temp_packet.get_previous_location()->get_id())->get_id(), temp_packet.get_destination()->get_id());
 
+				int is_valid_vertex_path = 0;
+
 				// Search temp_paths for destination node
 				for (auto i : temp_paths)
 				{
@@ -170,6 +178,9 @@ void network::driver(string filename)
 					{
 						//cout << "This is our path (in reverse)";
 						temp_stack = i.second.get_vertices();
+
+						// path is valid
+						is_valid_vertex_path = 1;
 
 						for (int j = 0; j < i.second.get_vertices().size(); j++)
 						{
@@ -182,14 +193,15 @@ void network::driver(string filename)
 							}
 						}
 					}
-////// EXIT IF INVALID PATH
-					else
-					{
-						cout << endl << endl << "There is no path between these vertices. Exiting..." << endl;
-						system("pause");
-						exit(-1);
-					}
 				}
+				////// EXIT IF INVALID PATH
+				if(!is_valid_vertex_path)
+				{
+					cout << endl << endl << "There is no path between these vertices. Exiting..." << endl;
+					system("pause");
+					exit(-2);
+				}
+
 				
 				// Determine next intermediary node
 				  // Check path?
