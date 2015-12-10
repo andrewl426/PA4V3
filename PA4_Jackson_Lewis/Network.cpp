@@ -350,6 +350,8 @@ void network::driver(string filename)
 					}
 				}
 			}
+
+			
 			ticker++;
 		}
 	}
