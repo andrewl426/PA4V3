@@ -174,7 +174,10 @@ void network::driver(string filename)
 							reversed_temp_stack.push(temp_stack.top());
 														
 							//cout << " -> " << temp_stack.top()->get_id();
-							temp_stack.pop();							
+							if (temp_stack.size() > 0)
+							{
+								temp_stack.pop();
+							}
 						}
 					}
 				}
@@ -184,11 +187,17 @@ void network::driver(string filename)
 
 				temp_packet.set_previous_location(temp_packet.get_next_hop());//initializiing temp packet
 
-				reversed_temp_stack.pop();
+				if (reversed_temp_stack.size() > 0)
+				{
+					reversed_temp_stack.pop();
+				}
 				temp_packet.set_next_hop(reversed_temp_stack.top());
 				while (!reversed_temp_stack.empty())
 				{
-					reversed_temp_stack.pop();
+					if (reversed_temp_stack.size() > 0)
+					{
+						reversed_temp_stack.pop();
+					}
 				}
 
 				// Queue the packets arrival at the proper time
@@ -268,7 +277,11 @@ void network::driver(string filename)
 									reversed_temp_stack.push(temp_stack.top());
 
 									//cout << " -> " << temp_stack.top()->get_id();
-									temp_stack.pop();
+									
+									if (temp_stack.size() > 0)
+									{
+										temp_stack.pop();
+									}
 								}
 							}
 						}
@@ -280,28 +293,44 @@ void network::driver(string filename)
 						
 						while (reversed_temp_stack.top()->get_id() != in_the_network[i].get_previous_location()->get_id())
 						{
-							reversed_temp_stack.pop();
+							if (reversed_temp_stack.size() > 0)
+							{
+								reversed_temp_stack.pop();
+							}
 						}
-						reversed_temp_stack.pop();
-						in_the_network[i].set_next_hop(reversed_temp_stack.top());
-						while (!reversed_temp_stack.empty())
+						if (reversed_temp_stack.size() > 0)
 						{
 							reversed_temp_stack.pop();
 						}
+						if (reversed_temp_stack.size() > 0)
+						{
+							in_the_network[i].set_next_hop(reversed_temp_stack.top());
+						}
+						while (!reversed_temp_stack.empty())
+						{
+							if (reversed_temp_stack.size() > 0)
+							{
+								reversed_temp_stack.pop();
+							}
+						}
 
-						// Queue the packets arrival at the proper time
-						// push onto queue?
+
+						if (in_the_network[i].get_next_hop() != nullptr)
+						{
+							// Queue the packets arrival at the proper time
+							// push onto queue?
 
 
-						//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
+							//				cout << endl << endl << temp_packet.get_previous_location()->get_edges().at(temp_packet.get_next_hop()) << endl << endl;
 
-						in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
+							in_the_network[i].set_current_wait(in_the_network[i].get_previous_location()->get_edges().at(in_the_network[i].get_next_hop()) * in_the_network[i].get_next_hop()->get_load_factor());
 
-						// Increase the load factor of each node that communicated this tick
-						// Update source load factor
-						in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() + 1);
-						// Update dest load factor
-						in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() + 1);
+							// Increase the load factor of each node that communicated this tick
+							// Update source load factor
+							in_the_network[i].get_previous_location()->set_load_factor(in_the_network[i].get_previous_location()->get_load_factor() + 1);
+							// Update dest load factor
+							in_the_network[i].get_next_hop()->set_load_factor(in_the_network[i].get_next_hop()->get_load_factor() + 1);
+						}
 
 						// prints adams style info
 						cout << "Sending packet " << in_the_network[i].get_value() << " to vertex " << in_the_network[i]._next_hop->get_id()
