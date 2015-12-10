@@ -161,12 +161,14 @@ void network::driver(string filename)
 				// Compute the shortest route
 				temp_paths = _graph.computeShortestPath(_graph.get_vertices().at(starting_vertex), _graph.get_vertices().at(starting_vertex)->get_id(), temp_packet.get_destination()->get_id());
 
-				for (auto i : temp_paths)
+				for (int i = 1; i < _graph.get_vertices().size() + 1; i++)
 				{
-					for (int j = 0; j < i.second.get_vertices().size(); j++)
+					for (j = 1; j < temp_paths[_graph.get_vertices()[i]].get_vertices().size(); j++)
 					{
-						cout << "->" << i.second.pop_vertex()->get_id();
+						cout << temp_paths[_graph.get_vertices()[i]].get_vertices().top()->get_id() << "->";
+						temp_paths[_graph.get_vertices()[i]].get_vertices().pop();
 					}
+					cout << endl;
 				}
 
 				//// PRINT DIJKSTRA RESULTS
@@ -418,6 +420,9 @@ void network::file_processor(string filename)
 
 		if (parsed.size() == 1) //This should be a new node then. 
 		{			
+			//_graph._vertices[stoi(parsed[0])]->set_id(stoi(parsed[0]));
+			//_graph.get_vertices()[stoi(parsed[0])];
+			_graph._vertices[stoi(parsed[0])] = new vertex{  };
 			_graph._vertices[stoi(parsed[0])]->set_id(stoi(parsed[0]));
 		}
 		else // this is a path

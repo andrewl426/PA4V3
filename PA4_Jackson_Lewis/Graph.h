@@ -18,24 +18,24 @@ class graph
 {
 public:
 	// Public vars
-	unordered_map<int, vertex> _vertices;
+	unordered_map<int, vertex*> _vertices;
 
 	// Constructors
 	graph();
-	graph(unordered_map<int, vertex> new_vertices);
+	graph(unordered_map<int, vertex*> new_vertices);
 
 	// Copy Constructor
 
 	// Destructor
 
 	// Getters --- ADDITIONAL GETTERS ARE NEEDED FOR MANIPULATION OF INDIVIDUAL VERTICES probably - get_vertex_at(key), returning value
-	unordered_map<int, vertex> get_vertices() const;
+	unordered_map<int, vertex*> get_vertices() const;
 
 	// Setters --- ADDITIONAL SETTERS ARE NEEDED FOR MANIPULATION OF INDIVIDUAL VERTICES probably - set_vertex_at(key, value)
-	void set_vertices(unordered_map<int, vertex> new_vertices);
+	void set_vertices(unordered_map<int, vertex*> new_vertices);
 
 	// Methods
-	unordered_map<vertex, path> computeShortestPath(vertex start, int starting_vertex, int ending_vertex);
+	unordered_map<vertex*, path> computeShortestPath(vertex* start, int starting_vertex, int ending_vertex);
 	
 private:
 };
@@ -43,9 +43,13 @@ private:
 class PathWeightComparer
 {
 public:
-	bool operator()(const path lhs, const path rhs)
+	bool operator()(const path &lhs, const path &rhs)
 	{
-		return (lhs.get_vertices().top().getPathWeight() > lhs.get_vertices().top().getPathWeight());
+		return (lhs.get_vertices().top()->getPathWeight() > lhs.get_vertices().top()->getPathWeight());
+	}
+	bool operator()(const vertex &lhs, const vertex &rhs)
+	{
+		return (lhs.getPathWeight() > lhs.getPathWeight());
 	}
 };
 

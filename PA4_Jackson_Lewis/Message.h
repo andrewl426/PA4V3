@@ -19,12 +19,12 @@ class message
 public:
 	// Public vars
 	queue<packet> _packets;
-	vertex _starting_vertex;
-	vertex _ending_vertex;
+	vertex* _starting_vertex;
+	vertex* _ending_vertex;
 	
 	// Constructors
 	message();
-	message(queue<packet> new_packets, vertex new_starting_vertex, vertex new_ending_vertex);
+	message(queue<packet> new_packets, vertex* new_starting_vertex, vertex* new_ending_vertex);
 
 	// Copy Constructor
 
@@ -32,13 +32,13 @@ public:
 
 	// Getters
 	const queue<packet> get_packets();
-	const vertex get_starting_vertex();
-	const vertex get_ending_vertex();
+	const vertex* get_starting_vertex();
+	const vertex* get_ending_vertex();
 
 	// Setters
 	void set_packets(queue<packet> new_packets);
-	void set_starting_vertex(vertex new_starting_vertex);
-	void set_ending_vertex(vertex new_ending_vertex);
+	void set_starting_vertex(vertex* new_starting_vertex);
+	void set_ending_vertex(vertex* new_ending_vertex);
 
 	// Methods
 	void add_packet(packet new_packet);

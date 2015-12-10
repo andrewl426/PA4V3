@@ -27,7 +27,7 @@ graph::graph()
 {
 	//_vertices = empty!
 }
-graph::graph(unordered_map<int, vertex> new_vertices)
+graph::graph(unordered_map<int, vertex*> new_vertices)
 {
 	_vertices = new_vertices;
 }
@@ -37,19 +37,19 @@ graph::graph(unordered_map<int, vertex> new_vertices)
 // Destructor
 
 // Getters
-unordered_map<int, vertex> graph::get_vertices() const
+unordered_map<int, vertex*> graph::get_vertices() const
 {
 	return _vertices;
 }
 
 // Setters
-void graph::set_vertices(unordered_map<int, vertex> new_vertices)
+void graph::set_vertices(unordered_map<int, vertex*> new_vertices)
 {
 	_vertices = new_vertices;
 }
 
 // Methods
-unordered_map<vertex, path> graph::computeShortestPath(vertex start , int starting_vertex, int ending_vertex)
+unordered_map<vertex*, path> graph::computeShortestPath(vertex* start , int starting_vertex, int ending_vertex)
 {
 	/*
 	A note on Dijkstra's Algorithm
@@ -63,20 +63,20 @@ unordered_map<vertex, path> graph::computeShortestPath(vertex start , int starti
 	*/
 	
 	//holds known distances
-	unordered_map<vertex, path> paths;
+	unordered_map<vertex*, path> paths;
 	//underlying heap
 	priority_queue<path, vector<path>, PathWeightComparer> dijkstra_queue{};
 	path temp;
 //cout << endl << "*****STA DIJKSTRAS*****" << endl;
 
 	//reset start's path weight
-	start.set_path_weight(0);
+	start->set_path_weight(0);
 	temp.push_vertex(start);
 
 //cout << endl << "start.path_weight: " << start.getPathWeight();
 
 	//make sure that the starting vertex is in the graph
-	if (_vertices.find(start.get_id()) != _vertices.end())
+	if (_vertices.find(start->get_id()) != _vertices.end())
 	{
 		//push on starting vertex
 		dijkstra_queue.push(temp);
@@ -95,27 +95,30 @@ unordered_map<vertex, path> graph::computeShortestPath(vertex start , int starti
 			{
 				//cout << top.get_load_factor() << endl;
 				//make known
-				int current_path_weight = top.get_vertices().top().getPathWeight() * top.get_vertices().top().get_load_factor();
-				//cout << "Current path weight: " << current_path_weight << endl;
-				top.get_vertices().top().set_path_weight(current_path_weight);				
+							
 //cout << endl << endl << "vertex top(id): " << top.get_id();
 //cout << endl << "vertex top(PW): " << top.getPathWeight();
-//cout << endl << "vertex top(LF): " << top.get_load_factor();
+//cout << endl << "vertex top(LF): " << top.get_load_factor();	   
+
+				paths[top.get_vertices().top()] = top;
 
 				//push on outgoing edges
-				for (auto item : top.get_vertices().top().get_edges())
+				for (auto item : top.get_vertices().top()->get_edges())
 				{
 					vertex *next = item.first;
-					int weight = item.second * top.get_vertices().top().get_load_factor();
+					//int weight = item.second * top.get_vertices().top()->get_load_factor();
 // Prints the wight equation..	//cout << endl << "Weight = " << item.second << " * " << top.get_load_factor();
 
-					next->set_path_weight(weight + current_path_weight);
+					//next->set_path_weight(weight + current_path_weight);
 
 					//not known?  add to heap
-					if (paths.find(*next) == paths.end())
+					if (paths.find(next) == paths.end())
 					{
-						path next_path;
-						next_path.push_vertex(*next);
+						path next_path = top;
+						int current_path_weight = top.get_distance_traveled() * next->get_load_factor();
+					
+						next_path.push_vertex(next);
+						next_path.set_distance_traveled(current_path_weight);
 						dijkstra_queue.push(next_path);
 					}
 				}

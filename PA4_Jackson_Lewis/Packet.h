@@ -51,9 +51,9 @@ public:
 	void set_arrival_time(int new_time);
 	void set_order(int new_order);
 	void set_current_wait(int new_current_wait);
-	void set_destination(vertex new_destination);
-	void set_previous_location(vertex new_previous_location);
-	void set_next_hop(vertex new_next_hop);
+	void set_destination(vertex* new_destination);
+	void set_previous_location(vertex* new_previous_location);
+	void set_next_hop(vertex* new_next_hop);
 	void set_packets_path(path new_packets_path);
 
 	// Methods

@@ -17,28 +17,28 @@ class path
 {
 public:
 	// Public vars
-	stack<vertex> _vertices;
+	stack<vertex*> _vertices;
 	int _distance_traveled = 0;
 
 	// Constructors
 	path();
-	path(stack<vertex> new_vertices, int new_distance_traveled);
+	path(stack<vertex*> new_vertices, int new_distance_traveled);
 
 	// Copy Constructor
 
 	// Destructor
 
 	// Getters
-	stack<vertex> get_vertices() const;
+	stack<vertex*> get_vertices() const;
 	int get_distance_traveled() const;
 
 	// Setters
-	void set_vertices(stack<vertex> new_vertices);
+	void set_vertices(stack<vertex*> new_vertices);
 	void set_distance_traveled(int new_distance_traveled);
 
 	// Methods
-	void path::push_vertex(vertex next_vertex);
-	vertex path::pop_vertex();
+	void path::push_vertex(vertex* next_vertex);
+	vertex* path::pop_vertex();
 
 private:
 };

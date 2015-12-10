@@ -92,17 +92,17 @@ void packet::set_current_wait(int new_current_wait)
 {
 	_current_wait = new_current_wait;
 }
-void packet::set_destination(vertex new_destination)
+void packet::set_destination(vertex* new_destination)
 {
-	_destination = &new_destination;
+	_destination = new_destination;
 }
-void packet::set_previous_location(vertex new_previous_location)
+void packet::set_previous_location(vertex* new_previous_location)
 {
-	_previous_location = &new_previous_location;
+	_previous_location = new_previous_location;
 }
-void packet::set_next_hop(vertex new_next_hop)
+void packet::set_next_hop(vertex* new_next_hop)
 {
-	_next_hop = &new_next_hop;
+	_next_hop = new_next_hop;
 }
 void packet::set_packets_path(path new_packets_path)
 {

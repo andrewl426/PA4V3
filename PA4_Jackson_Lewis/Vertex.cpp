@@ -66,4 +66,3 @@ void vertex::set_path_weight(int new_weight)
 	_path_weight = new_weight;
 }
 
-// Methods
