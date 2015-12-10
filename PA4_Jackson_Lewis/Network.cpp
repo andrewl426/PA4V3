@@ -68,7 +68,7 @@ void network::driver(string filename)
 	int j = 0; // used to keep track of message order
 	int starting_vertex;
 	int ending_vertex;
-	int ticker = 0;
+	int ticker = 1;
 	unordered_map<vertex, int> distances;
 	vertex temp_vertex;
 	stack<vertex*> temp_stack;
